@@ -8,6 +8,9 @@
 #include "MFCApplication4Dlg.h"
 #include "afxdialogex.h"
 #include <random>
+#include <fstream>
+#include <afxwin.h>
+#include <atlconv.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -82,6 +85,7 @@ BEGIN_MESSAGE_MAP(CMFCApplication4Dlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT2, &CMFCApplication4Dlg::OnEnChangeEdit2)
 	ON_BN_CLICKED(IDC_CHECK2, &CMFCApplication4Dlg::OnBnClickedCheck2)
 	ON_BN_CLICKED(IDC_CHECK4, &CMFCApplication4Dlg::OnBnClickedCheck4)
+	ON_BN_CLICKED(IDC_CHECK3, &CMFCApplication4Dlg::OnBnClickedCheck3)
 END_MESSAGE_MAP()
 
 
@@ -194,7 +198,7 @@ void CMFCApplication4Dlg::OnPaint()
 	else
 	{
 		
-		dc.FillSolidRect(0, 0, 600, 500, RGB(238, 117, 93));
+		dc.FillSolidRect(0, 0, 600, 500, RGB(238, 128, 98));
 
 		CDialogEx::OnPaint();
 	}
@@ -318,10 +322,32 @@ void CMFCApplication4Dlg::OnBnClickedButton1()
 
 void CMFCApplication4Dlg::OnBnClickedButton2()
 {
-	
+	_EDIT.GetWindowTextW(_EDITTEXT);
+
+	if (_EDITTEXT.IsEmpty())
+	{
+		AfxMessageBox(L"Поле ввода пустое. Нечего сохранять.");
+		return;
+	}
+
+	int response = AfxMessageBox(L"Вы хотите сохронить?", MB_YESNO | MB_ICONQUESTION);
+	if (response == IDNO) {
+		return;
+	}
+
+	std::ofstream outFile(CT2A(FilePath), std::ios_base::app);
+
+	if (!outFile) {
+		AfxMessageBox(L"Не удалось открыть файл для записи!");
+		return;
+	}
+
+	outFile << CT2A(_EDITTEXT) << std::endl;
+
+	outFile.close();
+	AfxMessageBox(L"Данные успешно сохранены в файл!");
+
 }
-
-
 
 
 
@@ -383,4 +409,10 @@ void CMFCApplication4Dlg::OnBnClickedCheck4()
 		AfxMessageBox(_T("Ты должен выбрать минимум 1 элемент для генерации кода!"));
 		Symbols.SetCheck(BST_CHECKED);
 	}
+}
+
+
+void CMFCApplication4Dlg::OnBnClickedCheck3()
+{
+	// TODO: добавьте свой код обработчика уведомлений
 }
