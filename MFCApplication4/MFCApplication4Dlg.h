@@ -64,7 +64,7 @@ public:
 	afx_msg void OnBnClickedCheck4();
 	afx_msg void OnBnClickedCheck3();
 
-	CString FilePath = L"C:\\Users\\user\\Documents\\C++projects\\MFCApplication4\\MFCApplication4\\Debug\\MFCApplication4.tlog\\Data.txt";
+	CString FilePath = _T("C:\\Users\\user\\Documents\\C++projects\\MFCApplication4\\MFCApplication4\\Debug\\MFCApplication4.tlog\\Data.txt");
 	CString _EDITTEXT;
 	CString _EditNameData;
 

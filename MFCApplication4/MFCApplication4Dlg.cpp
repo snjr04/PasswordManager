@@ -158,14 +158,15 @@ BOOL CMFCApplication4Dlg::OnInitDialog()
 		}
 	}
 
-
-
-
 	str.Format(_T("%d"), num);
 	PassLength.SetWindowText(str);
 
+	SetFileAttributes(FilePath, FILE_ATTRIBUTE_HIDDEN);
+	
 
-	return TRUE;  // возврат значения TRUE, если фокус не передан элементу управления
+
+
+	return TRUE;  
 }
 
 void CMFCApplication4Dlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -354,7 +355,6 @@ void CMFCApplication4Dlg::OnBnClickedButton2()
 		}
 		std::ofstream outFile(CT2A(FilePath), std::ios_base::app);
 		
-
 		if (!outFile) {
 			AfxMessageBox(L"Не удалось открыть файл для записи!");
 			return;
