@@ -45,12 +45,15 @@ public:
 
 	CButton UpperCase;
 	CButton Numbers;
+	CButton LowerCase;
+	CButton Symbols;
 
+	BOOL m_Sym;
 	BOOL m_Str;
 	BOOL m_Num;
+	BOOL m_Low;
 	afx_msg void OnBnClickedCheck1();
-	CButton Symbols;
-	BOOL m_Sym;
+
 	afx_msg void OnEnChangeEdit1();
 	afx_msg void OnEnChangeEdit2();
 
@@ -63,5 +66,8 @@ public:
 
 	CString FilePath = L"C:\\Users\\user\\Documents\\C++projects\\MFCApplication4\\MFCApplication4\\Debug\\MFCApplication4.tlog\\Data.txt";
 	CString _EDITTEXT;
+	CString _EditNameData;
 
+	CEdit _EditName;
+	
 };

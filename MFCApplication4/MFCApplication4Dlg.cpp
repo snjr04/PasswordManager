@@ -71,6 +71,8 @@ void CMFCApplication4Dlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK1, UpperCase);
 	DDX_Control(pDX, IDC_CHECK2, Numbers);
 	DDX_Control(pDX, IDC_CHECK4, Symbols);
+	DDX_Control(pDX, IDC_EDIT3, _EditName);
+	DDX_Control(pDX, IDC_CHECK3, LowerCase);
 }
 
 BEGIN_MESSAGE_MAP(CMFCApplication4Dlg, CDialogEx)
@@ -118,7 +120,7 @@ BOOL CMFCApplication4Dlg::OnInitDialog()
 	// Задает значок для этого диалогового окна.  Среда делает это автоматически,
 	//  если главное окно приложения не является диалоговым
 	SetIcon(m_hIcon, TRUE);			// Крупный значок
-	SetIcon(m_hIcon, FALSE);		// Мелкий значок
+	SetIcon(m_hIcon, FALSE);		
 
 	// TODO: добавьте дополнительную инициализацию
 
@@ -135,21 +137,28 @@ BOOL CMFCApplication4Dlg::OnInitDialog()
 	m_Sym = BST_CHECKED;
 	Symbols.SetCheck(m_Sym);
 
+	LowerCase.SetCheck(BST_CHECKED);
+	m_Low = BST_CHECKED;
+	LowerCase.SetCheck(m_Low);
 
-	if (m_Str== BST_UNCHECKED && m_Sym == BST_UNCHECKED) {
-		AfxMessageBox(_T("Ты долен выбрать минимум 1 элемент для генерации!"));
+
+	if (m_Num == BST_CHECKED) {
+		if (m_Str == BST_UNCHECKED) {
+			m_Str = BST_CHECKED;
+		}
+
+		if (m_Sym == BST_UNCHECKED) {
+			m_Sym = BST_CHECKED;
+			Symbols.SetCheck(m_Sym);
+		}
+
+		if (m_Low == BST_UNCHECKED) {
+			m_Low = BST_CHECKED;
+			LowerCase.SetCheck(m_Low);
+		}
 	}
-	else {
-		m_Num = BST_CHECKED;
-		Symbols.SetCheck(m_Sym);
-	}
-	if (m_Num == BST_UNCHECKED && m_Str == BST_UNCHECKED) {
-		AfxMessageBox(_T("Ты долен выбрать минимум 1 элемент для генерации!"));
-	}
-	else {
-		m_Sym = BST_CHECKED;
-		Symbols.SetCheck(m_Sym);
-	}
+
+
 
 
 	str.Format(_T("%d"), num);
@@ -198,7 +207,7 @@ void CMFCApplication4Dlg::OnPaint()
 	else
 	{
 		
-		dc.FillSolidRect(0, 0, 600, 500, RGB(238, 128, 98));
+		dc.FillSolidRect(0, 0, 700, 500, RGB(238, 128, 98));
 
 		CDialogEx::OnPaint();
 	}
@@ -244,7 +253,8 @@ void CMFCApplication4Dlg::OnBnClickedOk()
 		int PassLen = _ttoi(str);
 
 		std::string characters = "";
-		const std::string charactersA = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		const std::string charactersA = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		const std::string charactersa = "abcdefghijklmnopqrstuvwxyz";
 		const std::string characters01 = "0123456789";
 		const std::string charactersSym = ":;/|!@#$%^&*()'{\\}[]";
 
@@ -252,6 +262,7 @@ void CMFCApplication4Dlg::OnBnClickedOk()
 		m_Str = UpperCase.GetCheck();
 		m_Num = Numbers.GetCheck();
 		m_Sym = Symbols.GetCheck();
+		m_Low = LowerCase.GetCheck();
 
 		if (m_Str == BST_CHECKED) {
 			characters += charactersA;
@@ -264,6 +275,13 @@ void CMFCApplication4Dlg::OnBnClickedOk()
 		{
 			characters += charactersSym;
 		}
+		if (m_Low == BST_CHECKED)
+		{
+			characters += charactersa;
+		}
+
+
+
 		std::random_device rd;
 		std::mt19937 generator(rd());
 		std::uniform_int_distribution<> distribution(0, static_cast<int>(characters.size()) - 1);
@@ -322,31 +340,31 @@ void CMFCApplication4Dlg::OnBnClickedButton1()
 
 void CMFCApplication4Dlg::OnBnClickedButton2()
 {
-	_EDIT.GetWindowTextW(_EDITTEXT);
-
-	if (_EDITTEXT.IsEmpty())
+	if (_EditName.GetWindowTextLengthW() == 0)
 	{
-		AfxMessageBox(L"Поле ввода пустое. Нечего сохранять.");
-		return;
+		AfxMessageBox(L"Введите название для пароля!");
 	}
+	else {
+		_EDIT.GetWindowTextW(_EDITTEXT);
+		_EditName.GetWindowTextW(_EditNameData);
+		if (_EDITTEXT.IsEmpty())
+		{
+			AfxMessageBox(L"Поле ввода пустое. Нечего сохранять.");
+			return;
+		}
+		std::ofstream outFile(CT2A(FilePath), std::ios_base::app);
+		
 
-	int response = AfxMessageBox(L"Вы хотите сохронить?", MB_YESNO | MB_ICONQUESTION);
-	if (response == IDNO) {
-		return;
+		if (!outFile) {
+			AfxMessageBox(L"Не удалось открыть файл для записи!");
+			return;
+		}
+		outFile << "Название:"<< CT2A(_EditNameData) << std::endl;
+		outFile <<"Пароль:"<< CT2A(_EDITTEXT) << std::endl;
+
+		outFile.close();
+		AfxMessageBox(L"Данные успешно сохранены в файл!");
 	}
-
-	std::ofstream outFile(CT2A(FilePath), std::ios_base::app);
-
-	if (!outFile) {
-		AfxMessageBox(L"Не удалось открыть файл для записи!");
-		return;
-	}
-
-	outFile << CT2A(_EDITTEXT) << std::endl;
-
-	outFile.close();
-	AfxMessageBox(L"Данные успешно сохранены в файл!");
-
 }
 
 
@@ -379,9 +397,9 @@ void CMFCApplication4Dlg::OnBnClickedCheck2()
 	m_Str = UpperCase.GetCheck();
 	m_Sym = Symbols.GetCheck();
 	m_Num = Numbers.GetCheck();
+	m_Low = LowerCase.GetCheck();
 
-
-	if (m_Str == BST_UNCHECKED && m_Sym == BST_UNCHECKED) {
+	if (m_Str == BST_UNCHECKED && m_Sym == BST_UNCHECKED && m_Low == BST_UNCHECKED) {
 		AfxMessageBox(_T("Ты долен выбрать минимум 1 элемент для генерации!"));
 		Numbers.SetCheck(BST_CHECKED);
 	}
@@ -392,8 +410,9 @@ void CMFCApplication4Dlg::OnBnClickedCheck1()
 	m_Str = UpperCase.GetCheck();
 	m_Sym = Symbols.GetCheck();
 	m_Num = Numbers.GetCheck();
+	m_Low = LowerCase.GetCheck();
 
-	if (m_Num == BST_UNCHECKED && m_Sym == BST_UNCHECKED) {
+	if (m_Num == BST_UNCHECKED && m_Sym == BST_UNCHECKED && m_Low == BST_UNCHECKED) {
 		AfxMessageBox(_T("Ты долен выбрать минимум 1 элемент для генерации!"));
 		UpperCase.SetCheck(BST_CHECKED);
 	}
@@ -404,15 +423,26 @@ void CMFCApplication4Dlg::OnBnClickedCheck4()
 	m_Str = UpperCase.GetCheck();
 	m_Sym = Symbols.GetCheck();
 	m_Num = Numbers.GetCheck();
-	if (m_Str == BST_UNCHECKED && m_Num == BST_UNCHECKED)
+	m_Low = LowerCase.GetCheck();
+
+	if (m_Str == BST_UNCHECKED && m_Num == BST_UNCHECKED && m_Low == BST_UNCHECKED)
 	{
 		AfxMessageBox(_T("Ты должен выбрать минимум 1 элемент для генерации кода!"));
 		Symbols.SetCheck(BST_CHECKED);
 	}
+
 }
 
 
 void CMFCApplication4Dlg::OnBnClickedCheck3()
 {
-	// TODO: добавьте свой код обработчика уведомлений
+	m_Str = UpperCase.GetCheck();
+	m_Sym = Symbols.GetCheck();
+	m_Num = Numbers.GetCheck();
+	m_Low = LowerCase.GetCheck();
+
+	if (m_Str == BST_UNCHECKED && m_Sym == BST_UNCHECKED && m_Num == BST_UNCHECKED) {
+		AfxMessageBox(_T("Ты долен выбрать минимум 1 элемент для генерации!"));
+		LowerCase.SetCheck(BST_CHECKED);
+	}
 }
