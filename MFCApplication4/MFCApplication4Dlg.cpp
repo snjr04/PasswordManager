@@ -1,8 +1,4 @@
-﻿
-// MFCApplication4Dlg.cpp: файл реализации
-//
-
-#include "pch.h"
+﻿#include "pch.h"
 #include "framework.h"
 #include "MFCApplication4.h"
 #include "MFCApplication4Dlg.h"
@@ -11,29 +7,27 @@
 #include <fstream>
 #include <afxwin.h>
 #include <atlconv.h>
+#include <windows.h>
+#include <bcrypt.h>
+
+
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
 
-
-// Диалоговое окно CAboutDlg используется для описания сведений о приложении
-
 class CAboutDlg : public CDialogEx
 {
 public:
 	CAboutDlg();
+	
 
-
-// Данные диалогового окна
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_ABOUTBOX };
 #endif
 
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // поддержка DDX/DDV
-
-// Реализация
+	virtual void DoDataExchange(CDataExchange* pDX);
 protected:
 	DECLARE_MESSAGE_MAP()
 };
@@ -49,11 +43,6 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 END_MESSAGE_MAP()
-
-
-// Диалоговое окно CMFCApplication4Dlg
-
-
 
 CMFCApplication4Dlg::CMFCApplication4Dlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_MFCAPPLICATION4_DIALOG, pParent)
@@ -90,16 +79,9 @@ BEGIN_MESSAGE_MAP(CMFCApplication4Dlg, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK3, &CMFCApplication4Dlg::OnBnClickedCheck3)
 END_MESSAGE_MAP()
 
-
-// Обработчики сообщений CMFCApplication4Dlg
-
 BOOL CMFCApplication4Dlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
-
-	// Добавление пункта "О программе..." в системное меню.
-
-	// IDM_ABOUTBOX должен быть в пределах системной команды.
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
 	ASSERT(IDM_ABOUTBOX < 0xF000);
 
@@ -117,12 +99,8 @@ BOOL CMFCApplication4Dlg::OnInitDialog()
 		}
 	}
 
-	// Задает значок для этого диалогового окна.  Среда делает это автоматически,
-	//  если главное окно приложения не является диалоговым
-	SetIcon(m_hIcon, TRUE);			// Крупный значок
+	SetIcon(m_hIcon, TRUE);		
 	SetIcon(m_hIcon, FALSE);		
-
-	// TODO: добавьте дополнительную инициализацию
 
 
 	UpperCase.SetCheck(BST_CHECKED);
@@ -163,9 +141,6 @@ BOOL CMFCApplication4Dlg::OnInitDialog()
 
 	SetFileAttributes(FilePath, FILE_ATTRIBUTE_HIDDEN);
 	
-
-
-
 	return TRUE;  
 }
 
@@ -182,19 +157,15 @@ void CMFCApplication4Dlg::OnSysCommand(UINT nID, LPARAM lParam)
 	}
 }
 
-// При добавлении кнопки свертывания в диалоговое окно нужно воспользоваться приведенным ниже кодом,
-//  чтобы нарисовать значок.  Для приложений MFC, использующих модель документов или представлений,
-//  это автоматически выполняется рабочей областью.
 
 void CMFCApplication4Dlg::OnPaint()
 {
-	CPaintDC dc(this); // Создаем контекст устройства для рисования
+	CPaintDC dc(this);
 
 	if (IsIconic())
 	{
 		SendMessage(WM_ICONERASEBKGND, reinterpret_cast<WPARAM>(dc.GetSafeHdc()), 0);
 
-		// Выравнивание значка по центру клиентского прямоугольника
 		int cxIcon = GetSystemMetrics(SM_CXICON);
 		int cyIcon = GetSystemMetrics(SM_CYICON);
 		CRect rect;
@@ -202,27 +173,23 @@ void CMFCApplication4Dlg::OnPaint()
 		int x = (rect.Width() - cxIcon + 1) / 2;
 		int y = (rect.Height() - cyIcon + 1) / 2;
 
-		// Нарисуйте значок
 		dc.DrawIcon(x, y, m_hIcon);
 	}
 	else
 	{
 		
 		dc.FillSolidRect(0, 0, 700, 500, RGB(238, 128, 98));
-
 		CDialogEx::OnPaint();
 	}
+
+
+
 }
 
-
-// Система вызывает эту функцию для получения отображения курсора при перемещении
-//  свернутого окна.
 HCURSOR CMFCApplication4Dlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
-
-
 
 void CMFCApplication4Dlg::OnEnChangeEdit2()
 {
@@ -238,8 +205,6 @@ void CMFCApplication4Dlg::OnEnChangeEdit2()
 	}
 
 }
-
-
 
 void CMFCApplication4Dlg::OnBnClickedOk()
 {
@@ -293,35 +258,21 @@ void CMFCApplication4Dlg::OnBnClickedOk()
 			password += characters[distribution(generator)];
 		}
 
-		// Преобразуем std::string в CString
 		cstrPassword = CString(password.c_str());
-
-		// Устанавливаем пароль в поле _EDIT
 		_EDIT.SetWindowText(cstrPassword);
 	}
 
-
-// Копирование пароля в буфер обмена
 void CMFCApplication4Dlg::OnBnClickedButton1()
 {
-	// Открываем буфер обмена
 	if (OpenClipboard())
 	{
-		// Очищаем буфер обмена
 		EmptyClipboard();
-
-		// Определяем длину строки, включая завершающий нулевой символ
 		size_t strSize = (cstrPassword.GetLength() + 1) * sizeof(TCHAR);
-
-		// Выделяем глобальную память для строки
 		HGLOBAL hGlob = GlobalAlloc(GMEM_MOVEABLE, strSize);
-
 		if (hGlob)
 		{
-			// Копируем текст в выделенную память
 			memcpy(GlobalLock(hGlob), (LPVOID)(LPCTSTR)cstrPassword, strSize);
 			GlobalUnlock(hGlob);
-
 #ifdef UNICODE
 			SetClipboardData(CF_UNICODETEXT, hGlob);
 #else
@@ -333,64 +284,54 @@ void CMFCApplication4Dlg::OnBnClickedButton1()
 	}
 }
 
-
-
-
-
-
-
-void CMFCApplication4Dlg::OnBnClickedButton2()
-{
-	if (_EditName.GetWindowTextLengthW() == 0)
-	{
-		AfxMessageBox(L"Введите название для пароля!");
+// Функция шифрования
+CString encryptDecrypt(const CString& key, const CString& data) {
+	CString result = data;
+	for (int i = 0; i < data.GetLength(); ++i) {
+		result.SetAt(i, data[i] ^ key[i % key.GetLength()]);
 	}
-	else {
-		_EDIT.GetWindowTextW(_EDITTEXT);
-		_EditName.GetWindowTextW(_EditNameData);
-		if (_EDITTEXT.IsEmpty())
-		{
-			AfxMessageBox(L"Поле ввода пустое. Нечего сохранять.");
-			return;
-		}
-		std::ofstream outFile(CT2A(FilePath), std::ios_base::app);
-		
-		if (!outFile) {
-			AfxMessageBox(L"Не удалось открыть файл для записи!");
-			return;
-		}
-		outFile << "Название:"<< CT2A(_EditNameData) << std::endl;
-		outFile <<"Пароль:"<< CT2A(_EDITTEXT) << std::endl;
-
-		outFile.close();
-		AfxMessageBox(L"Данные успешно сохранены в файл!");
-	}
+	return result;
 }
 
+void CMFCApplication4Dlg::OnBnClickedButton2() {
+	if (_EditName.GetWindowTextLengthW() == 0) {
+		AfxMessageBox(L"Введите название для пароля!");
+		return;
+	}
 
+	_EDIT.GetWindowTextW(_EDITTEXT);
+	_EditName.GetWindowTextW(_EditNameData);
 
+	if (_EDITTEXT.IsEmpty()) {
+		AfxMessageBox(L"Поле ввода пустое. Нечего сохранять.");
+		return;
+	}
 
+	// Определяем key и data
+	CString key = _T("your_key"); 
+	CString data = _EDITTEXT;     
 
+	CString resultData = encryptDecrypt(key, data);
+	std::ofstream outFile(CT2A(FilePath), std::ios_base::app);
 
+	if (!outFile) {
+		AfxMessageBox(L"Не удалось открыть файл для записи!");
+		return;
+	}
 
+	// Запись зашифрованных данных в файл
+	outFile << "Название: " << CT2A(_EditNameData) << std::endl;
+	outFile << "Пароль: " << CT2A(resultData) << std::endl;
 
-
+	outFile.close();
+	AfxMessageBox(L"Данные успешно сохранены в файл!");
+}
 
 
 void CMFCApplication4Dlg::OnEnChangeEdit1()
 {
-	// TODO:  Если это элемент управления RICHEDIT, то элемент управления не будет
-	// send this notification unless you override the CDialogEx::OnInitDialog()
-	// функция и вызов CRichEditCtrl().SetEventMask()
-	// with the ENM_CHANGE flag ORed into the mask.
 
-	// TODO:  Добавьте код элемента управления
 }
-
-
-
-
-
 
 void CMFCApplication4Dlg::OnBnClickedCheck2()
 {
@@ -433,7 +374,6 @@ void CMFCApplication4Dlg::OnBnClickedCheck4()
 
 }
 
-
 void CMFCApplication4Dlg::OnBnClickedCheck3()
 {
 	m_Str = UpperCase.GetCheck();
@@ -446,3 +386,6 @@ void CMFCApplication4Dlg::OnBnClickedCheck3()
 		LowerCase.SetCheck(BST_CHECKED);
 	}
 }
+
+
+

@@ -69,5 +69,5 @@ public:
 	CString _EditNameData;
 
 	CEdit _EditName;
-	
+
 };
