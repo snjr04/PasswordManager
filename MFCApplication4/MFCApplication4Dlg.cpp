@@ -8,7 +8,10 @@
 #include <afxwin.h>
 #include <atlconv.h>
 #include <windows.h>
-#include <bcrypt.h>
+#include <SecondDialog.h>
+#include <FirstDialog.h>
+
+
 
 
 
@@ -35,6 +38,11 @@ protected:
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
 {
 }
+
+BEGIN_MESSAGE_MAP(CMFCApplication4Dlg, CDialogEx)
+	ON_COMMAND(IDC_MFCMENUBUTTON2, &CMFCApplication4Dlg::OnWindow1)
+	//ON_COMMAND(IDD_MFCAPPLICATION4_DIALOG, &CMFCApplication4Dlg::OnWindow2)
+END_MESSAGE_MAP()
 
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
@@ -64,6 +72,8 @@ void CMFCApplication4Dlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK3, LowerCase);
 }
 
+
+
 BEGIN_MESSAGE_MAP(CMFCApplication4Dlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
@@ -77,6 +87,7 @@ BEGIN_MESSAGE_MAP(CMFCApplication4Dlg, CDialogEx)
 	ON_BN_CLICKED(IDC_CHECK2, &CMFCApplication4Dlg::OnBnClickedCheck2)
 	ON_BN_CLICKED(IDC_CHECK4, &CMFCApplication4Dlg::OnBnClickedCheck4)
 	ON_BN_CLICKED(IDC_CHECK3, &CMFCApplication4Dlg::OnBnClickedCheck3)
+	ON_BN_CLICKED(IDC_MFCMENUBUTTON2, &CMFCApplication4Dlg::OnBnClickedMfcmenubutton2)
 END_MESSAGE_MAP()
 
 BOOL CMFCApplication4Dlg::OnInitDialog()
@@ -196,7 +207,7 @@ void CMFCApplication4Dlg::OnEnChangeEdit2()
 	PassLength.GetWindowText(str);
 	int number = _ttoi(str);
 
-	if (number < 4 || number > 24)
+	if (number < 4 || number > 54)
 	{
 		message = 1;
 	}
@@ -211,7 +222,7 @@ void CMFCApplication4Dlg::OnBnClickedOk()
 
 	if (message == 1)
 	{
-		AfxMessageBox(_T("Значение не может быть меньше 4 или больше 24!"));
+		AfxMessageBox(_T("Значение не может быть меньше 4 или больше 54!"));
 		return;
 	}
 		CString str;
@@ -284,7 +295,7 @@ void CMFCApplication4Dlg::OnBnClickedButton1()
 	}
 }
 
-// Функция шифрования
+
 CString encryptDecrypt(const CString& key, const CString& data) {
 	CString result = data;
 	for (int i = 0; i < data.GetLength(); ++i) {
@@ -307,7 +318,6 @@ void CMFCApplication4Dlg::OnBnClickedButton2() {
 		return;
 	}
 
-	// Определяем key и data
 	CString key = _T("your_key"); 
 	CString data = _EDITTEXT;     
 
@@ -319,7 +329,6 @@ void CMFCApplication4Dlg::OnBnClickedButton2() {
 		return;
 	}
 
-	// Запись зашифрованных данных в файл
 	outFile << "Название: " << CT2A(_EditNameData) << std::endl;
 	outFile << "Пароль: " << CT2A(resultData) << std::endl;
 
@@ -386,6 +395,41 @@ void CMFCApplication4Dlg::OnBnClickedCheck3()
 		LowerCase.SetCheck(BST_CHECKED);
 	}
 }
+/*
+void CMFCApplication4Dlg::OnWindow1()
+{
+	
+	CDialogEx dlg1(IDC_MFCMENUBUTTON1);
+	dlg1.DoModal();
 
+	FirstDialog dlg1;
+	if (dlg1.DoModal() == IDOK)
+	{
+		// Если первый диалог закрылся с результатом IDOK, открываем второй
+		SecondDialog dlg2;
+		dlg2.DoModal();
+	}
+}
 
+void CMFCApplication4Dlg::OnWindow2()
+{
+	// Открытие второго диалога
+	CDialogEx dlg2(IDD_MFCAPPLICATION4_DIALOG);
+	dlg2.DoModal();
+	SecondDialog dlg2;
+	dlg2.DoModal();
+}
+*/
 
+void CMFCApplication4Dlg::OnBnClickedMfcmenubutton2()
+{
+	CDialogEx dlg1(IDC_MFCMENUBUTTON1);
+	dlg1.DoModal();
+
+	FirstDialog dlg1;
+	if (dlg1.DoModal() == IDC_MFCMENUBUTTON2)
+	{
+		SecondDialog dlg2;
+		dlg2.DoModal();
+	}
+}

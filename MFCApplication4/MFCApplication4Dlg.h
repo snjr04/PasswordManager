@@ -7,7 +7,6 @@
 // Диалоговое окно CMFCApplication4Dlg
 class CMFCApplication4Dlg : public CDialogEx
 {
-// Создание
 public:
 	CMFCApplication4Dlg(CWnd* pParent = nullptr);	// стандартный конструктор
 
@@ -19,8 +18,6 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// поддержка DDX/DDV
 
-
-// Реализация
 protected:
 	HICON m_hIcon;
 	enum { TIMER_BUTTON_ID = 1 };
@@ -64,10 +61,15 @@ public:
 	afx_msg void OnBnClickedCheck4();
 	afx_msg void OnBnClickedCheck3();
 
+	void OnWindow1();
+
+	void OnWindow2();
+
 	CString FilePath = _T("C:\\Users\\user\\Documents\\C++projects\\MFCApplication4\\MFCApplication4\\Debug\\MFCApplication4.tlog\\Data.txt");
 	CString _EDITTEXT;
 	CString _EditNameData;
 
 	CEdit _EditName;
 
+	afx_msg void OnBnClickedMfcmenubutton2();
 };
