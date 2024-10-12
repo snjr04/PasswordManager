@@ -38,12 +38,12 @@ protected:
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
 {
 }
-
+/*
 BEGIN_MESSAGE_MAP(CMFCApplication4Dlg, CDialogEx)
 	ON_COMMAND(IDC_MFCMENUBUTTON2, &CMFCApplication4Dlg::OnWindow1)
-	//ON_COMMAND(IDD_MFCAPPLICATION4_DIALOG, &CMFCApplication4Dlg::OnWindow2)
+	ON_COMMAND(IDD_MFCAPPLICATION4_DIALOG, &CMFCApplication4Dlg::OnWindow2)
 END_MESSAGE_MAP()
-
+*/
 void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
