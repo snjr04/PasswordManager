@@ -410,15 +410,6 @@ void CMFCApplication4Dlg::OnWindow1()
 		dlg2.DoModal();
 	}
 }
-
-void CMFCApplication4Dlg::OnWindow2()
-{
-	// Открытие второго диалога
-	CDialogEx dlg2(IDD_MFCAPPLICATION4_DIALOG);
-	dlg2.DoModal();
-	SecondDialog dlg2;
-	dlg2.DoModal();
-}
 */
 
 void CMFCApplication4Dlg::OnBnClickedMfcmenubutton2()
